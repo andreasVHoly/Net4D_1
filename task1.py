@@ -10,7 +10,7 @@ dicti = {"":0}
 
 def task1(filename):
     #p = sp.Popen(('tcpdump', '-l','-nn','-r', 'eth1_eth2_20110207003505', 'icmp'), stdout=sp.PIPE)#gives full line
-    p = sp.Popen(('tcpdump', '-l', '-nn', '-r', filename, 'icmp'), stdout=sp.PIPE)
+    p = sp.Popen(('tcpdump', '-l', '-nn', '-r', "traffic/"+filename, 'icmp'), stdout=sp.PIPE)
 
     for row in iter(p.stdout.readline, b''):
         #print row.rstrip()

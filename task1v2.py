@@ -6,7 +6,8 @@
 import subprocess as sp
 import os
 
-dicti = {"":0}
+numberDict = {400:0}
+nameDict = {"":0}
 newFileName = "outputfiles/output"
 
 def filterPackets(filename,i):
@@ -15,25 +16,33 @@ def filterPackets(filename,i):
         print row
 
 def extractTypeAndCode(filename):
-
-    p = sp.Popen(('ipsumdump', '-r', '--src', '--icmp-type', '--icmp-code',"outputfiles/"+filename), stdout=sp.PIPE)
+    #ipsumdump -r --src --icmp-type --icmp-code --icmp-type-name --icmp-code-name outfile.pcap
+    p = sp.Popen(('ipsumdump', '-r', '--src', '--icmp-type', '--icmp-code', '--icmp-type-name', '--icmp-code-name',"outputfiles/"+filename), stdout=sp.PIPE)
 
     for row in iter(p.stdout.readline, b''):
         #print row.rstrip()
         #split into seperate parts
         splitted = row.split()
-        if (len(splitted) == 3):
+        
+        if len(splitted) == 5:
 
              # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
             if splitted[0][0:7] != "192.168" and splitted[0][0:3] != "10.":
 
                 #add into dictionary if new and increment count if not
                 message = str(splitted[1]) + "," + str(splitted[2])
-                if (str(splitted[1]).isdigit()):
-                    if dicti.has_key(message):
-                        dicti[message] += 1
-                    else:
-                        dicti[message] = 1
+
+                if numberDict.has_key(message):
+                    numberDict[message] += 1
+                else:
+                    numberDict[message] = 1
+
+                message = str(splitted[3]) + " " + str(splitted[4])
+
+                if nameDict.has_key(message):
+                    nameDict[message] += 1
+                else:
+                    nameDict[message] = 1
 
 
 
@@ -46,6 +55,10 @@ for f in os.listdir("./traffic"):
 for k in os.listdir("./outputfiles"):
     extractTypeAndCode(k)
 
-del dicti[""]
-for item in dicti:
-    print item + " : " + str(dicti[item])
+del nameDict[""]
+del numberDict[400]
+for item in nameDict:
+    print item + " : " + str(nameDict[item])
+
+for item in numberDict:
+    print item + " : " + str(numberDict[item])

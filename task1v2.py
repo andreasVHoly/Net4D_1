@@ -27,7 +27,7 @@ def extractTypeAndCode(filename):
         if len(splitted) == 6:
 
              # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
-            if (splitted[0][0:7] != "192.168" and splitted[0][0:3] != "10.") or (splitted[1][0:7] != "192.168" and splitted[1][0:3] != "10."):
+            if (splitted[0][0:7] != "192.168" or splitted[0][0:3] != "10.") and (splitted[1][0:7] != "192.168" or splitted[1][0:3] != "10."):
 
                 #add into dictionary if new and increment count if not
                 message = str(splitted[2]) + "," + str(splitted[3])

@@ -19,55 +19,52 @@ TCPIncoming = {"":0}
 TCPOutgoing = {"":0}
 
 #type, source port, dest port, size
-p = sp.Popen(('ipsumdump', '-p', '-S', '-D', '-L', '-r', 'traffic/eth1_eth2_20110207003505'), stdout=sp.PIPE)
+p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', 'traffic/eth1_eth2_20110207003505'), stdout=sp.PIPE)
 for row in iter(p.stdout.readline, b''):
     #print row
     splitted = row.split()
-
-
-    if splitted[0] == "T":
-        keyOut = splitted[1]
-        keyIn = splitted[2]
-        count = int(splitted[3])
-        #incoming connection
-        if TCPIncoming.has_key(keyIn):
-            TCPIncoming[keyIn] += count
-        else:
-            TCPIncoming[keyIn] = count
-        #outgoing connection
-        if TCPOutgoing.has_key(keyOut):
-            TCPOutgoing[keyOut] += count
-        else:
-            TCPOutgoing[keyOut] = count
-
-    elif splitted[0] == "U":
-        keyOut = splitted[1]
-        keyIn = splitted[2]
-        count = int(splitted[3])
-        # incoming connection
-        if UDPIncoming.has_key(keyIn):
-            UDPIncoming[keyIn] += count
-        else:
-            UDPIncoming[keyIn] = count
-        # outgoing connection
-        if UDPOutgoing.has_key(keyOut):
-            UDPOutgoing[keyOut] += count
-        else:
-            UDPOutgoing[keyOut] = count
+    #ensure we have apcket information
+    if len(splitted) == 6:
+        #filter out local traffic
+        if (splitted[1][0:7] != "192.168" or splitted[1][0:3] != "10.") and (splitted[2][0:7] != "192.168" or splitted[2][0:3] != "10."):
+            #if we have a tcp conn
+            if splitted[0] == "T":
+                #get values
+                keyOut = splitted[1]
+                keyIn = splitted[2]
+                count = int(splitted[3])
+                #incoming connection
+                if TCPIncoming.has_key(keyIn):
+                    TCPIncoming[keyIn] += count
+                else:
+                    TCPIncoming[keyIn] = count
+                #outgoing connection
+                if TCPOutgoing.has_key(keyOut):
+                    TCPOutgoing[keyOut] += count
+                else:
+                    TCPOutgoing[keyOut] = count
+            #if we have a udp conn
+            elif splitted[0] == "U":
+                #get values
+                keyOut = splitted[1]
+                keyIn = splitted[2]
+                count = int(splitted[3])
+                # incoming connection
+                if UDPIncoming.has_key(keyIn):
+                    UDPIncoming[keyIn] += count
+                else:
+                    UDPIncoming[keyIn] = count
+                # outgoing connection
+                if UDPOutgoing.has_key(keyOut):
+                    UDPOutgoing[keyOut] += count
+                else:
+                    UDPOutgoing[keyOut] = count
 
 #remove inits
 del TCPIncoming[""]
 del TCPOutgoing[""]
 del UDPOutgoing[""]
 del UDPIncoming[""]
-
-# print TCPIncoming
-# print "********"
-# print TCPOutgoing
-# print "********"
-# print UDPIncoming
-# print "********"
-# print UDPOutgoing
 
 #sort dictionaries
 sorted_TCPOut = sorted(TCPOutgoing.items(), key=operator.itemgetter(1))

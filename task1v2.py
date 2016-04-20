@@ -17,27 +17,27 @@ def filterPackets(filename,i):
 
 def extractTypeAndCode(filename):
     #ipsumdump -r --src --icmp-type --icmp-code --icmp-type-name --icmp-code-name outfile.pcap
-    p = sp.Popen(('ipsumdump', '-r', '--src', '--icmp-type', '--icmp-code', '--icmp-type-name', '--icmp-code-name',"outputfiles/"+filename), stdout=sp.PIPE)
+    p = sp.Popen(('ipsumdump', '-r', '--src', '--dst', '--icmp-type', '--icmp-code', '--icmp-type-name', '--icmp-code-name',"outputfiles/"+filename), stdout=sp.PIPE)
 
     for row in iter(p.stdout.readline, b''):
         #print row.rstrip()
         #split into seperate parts
         splitted = row.split()
-        
-        if len(splitted) == 5:
+
+        if len(splitted) == 6:
 
              # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
-            if splitted[0][0:7] != "192.168" and splitted[0][0:3] != "10.":
+            if (splitted[0][0:7] != "192.168" and splitted[0][0:3] != "10.") or (splitted[1][0:7] != "192.168" and splitted[1][0:3] != "10."):
 
                 #add into dictionary if new and increment count if not
-                message = str(splitted[1]) + "," + str(splitted[2])
+                message = str(splitted[2]) + "," + str(splitted[3])
 
                 if numberDict.has_key(message):
                     numberDict[message] += 1
                 else:
                     numberDict[message] = 1
 
-                message = str(splitted[3]) + " " + str(splitted[4])
+                message = str(splitted[4]) + " " + str(splitted[5])
 
                 if nameDict.has_key(message):
                     nameDict[message] += 1

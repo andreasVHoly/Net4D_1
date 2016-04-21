@@ -1,5 +1,4 @@
 ('*.google.com', 1768)
-('*.polkaspots.com', 1167)
 ('*.facebook.com', 1138)
 ('*.fbcdn.net', 1067)
 ('*.co.uk', 565)
@@ -7,3 +6,4 @@
 ('*.co.nz', 437)
 ('*.msn.com', 360)
 ('*.windowsupdate.com', 351)
+('*.live.com', 277)

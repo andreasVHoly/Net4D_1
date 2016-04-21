@@ -67,13 +67,12 @@ def runIpSumDump(filename):
                     keyIn = splitted[4]
                     count = int(splitted[5])
                     #incoming connection
-                    if TCPIncoming.has_key(keyIn):
+                    if keyIn in TCPIncoming:
                         TCPIncoming[keyIn] += count
                     else:
-                        #TCPIncoming[keyIn] = count
                         TCPIncoming["uncat"] += count
                     #outgoing connection
-                    if TCPOutgoing.has_key(keyOut):
+                    if keyOut in TCPOutgoing:
                         TCPOutgoing[keyOut] += count
                     else:
                         TCPOutgoing["uncat"] += count
@@ -86,12 +85,12 @@ def runIpSumDump(filename):
                     keyIn = splitted[4]
                     count = int(splitted[5])
                     # incoming connection
-                    if UDPIncoming.has_key(keyIn):
+                    if keyIn in UDPIncoming:
                         UDPIncoming[keyIn] += count
                     else:
                         UDPIncoming["uncat"] += count
                     # outgoing connection
-                    if UDPOutgoing.has_key(keyOut):
+                    if keyOut in UDPOutgoing:
                         UDPOutgoing[keyOut] += count
                     else:
                         UDPOutgoing["uncat"] += count
@@ -134,15 +133,7 @@ def writeToFile(filename):
 
 def main():
     readinPortFile()
-    fileDirs = []
-
-    #read in files from directory
-    for f in os.listdir("traffic/"):
-        print f
-        if os.path.isfile(os.path.join("traffic/",f)):
-            fileDirs.append(os.path.join("traffic/",f))
-
-    print len(fileDirs)
+    fileDirs = t1.readDir()
     #run over files
     for fle in fileDirs:
         print fle

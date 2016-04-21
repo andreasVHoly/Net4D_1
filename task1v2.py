@@ -30,34 +30,46 @@ def extractTypeAndCode(filename):
     p = sp.Popen(('ipsumdump', '-r', '--src', '--dst', '--icmp-type', '--icmp-code', '--icmp-type-name', '--icmp-code-name',"outputfiles/"+filename), stdout=sp.PIPE)
 
     for row in iter(p.stdout.readline, b''):
-        #split into seperate parts
+        # split into seperate parts
         splitted = row.split()
 
         if len(splitted) == 6:
-            #get source & dest
+            # get source & dest
             source = splitted[0]
             dest = splitted[1]
 
             # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
             if (isLocal(source) and not isLocal(dest)) or (not isLocal(source) and isLocal(dest)):
 
-                #add into dictionary if new and increment count if not
+                # add into dictionary if new and increment count if not
                 message = str(splitted[2]) + "," + str(splitted[3])
 
-                if numberDict.has_key(message):
+                if message in numberDict:
                     numberDict[message] += 1
                 else:
                     numberDict[message] = 1
 
                 message = str(splitted[4]) + " " + str(splitted[5])
 
-                if nameDict.has_key(message):
+                if message in nameDict:
                     nameDict[message] += 1
                 else:
                     nameDict[message] = 1
 
 
 
+
+def readDir():
+    fileDirs = []
+
+    # read in files from directory
+    for f in os.listdir("traffic/"):
+        print "found: " + f
+        if os.path.isfile(os.path.join("traffic/", f)):
+            fileDirs.append(os.path.join("traffic/", f))
+
+    print str(len(fileDirs)) + " files found"
+    return fileDirs
 
 
 

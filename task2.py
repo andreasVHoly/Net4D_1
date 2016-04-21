@@ -50,15 +50,10 @@ def analizeFile(filename):
     for row in iter(p.stdout.readline, b''):
         #Time:1297105805	n=2	avg=124.50	stddev=44.50	bps=398.40
         splitter = row.split()
-        #print splitter[4]
-        #need to get number from this not the bps kak
         num = ""
         for letter in splitter[1]:
             if letter.isdigit():
                 num += letter
-        #print num
-        #sourceDest[count][2] += int(num)
-        #print "*"+str(sourceDest[count][2])
         count += int(num)
     print count
 

@@ -12,20 +12,18 @@ import task1v2 as t1
 
 domains = {"":0}
 
-def runCommand():
-    p = sp.Popen(('httpry', '-r', 'traffic/eth1_eth2_20110207201002'),stdout=sp.PIPE)
+def runCommand(filename):
+    #run command
+    p = sp.Popen(('httpry', '-r', filename),stdout=sp.PIPE)
     for row in iter(p.stdout.readline, b''):
         splitter = row.split()
-        #we are only looking at get's
         #print splitter
+        # we are only looking at get's
         if splitter[5] == "GET":
-            #need to loook at 5
-            #print splitter[6]
             domain = ""
             count = 0
-            #print len(splitter[6])-1
-            for i in range(len(splitter[6])-1,-1,-1):
-                #print splitter[6][i]
+            # we start from the back looking for .
+            for i in range(len(splitter[6])-1, -1, -1):
                 if splitter[6][i] == "." and count == 0:
                     count += 1
                     domain = splitter[6][i] + domain
@@ -34,40 +32,28 @@ def runCommand():
                 else:
                     domain = splitter[6][i] + domain
             domain = "*." + domain
-            #print domain
-            if domains.has_key(domain):
+            if domain in domains:
                 domains[domain] += 1
             else:
                 domains[domain] = 1
 
 
 
-runCommand()
-del domains[""]
+def cleanDomains():
+    sortedDomain = sorted(domains.items(), key=operator.itemgetter(1))
 
-
-# for item in domains:
-#     print item + " : " + str(domains[item])
-
-sorted_UDPIn = sorted(domains.items(), key=operator.itemgetter(1))
-
-
-for i in range(len(sorted_UDPIn)-1,len(sorted_UDPIn)-10,-1):
-    print sorted_UDPIn[i]
+    for i in range(len(sortedDomain) - 1, len(sortedDomain) - 10, -1):
+        print sortedDomain[i]
 
 
 
 def main():
-    readinPortFile()
-    for f in os.listdir("./traffic"):
-        runIpSumDump(f)
-
-    # remove inits
-    del TCPIncoming[""]
-    del TCPOutgoing[""]
-    del UDPOutgoing[""]
-    del UDPIncoming[""]
-    writeToFile("task3output.txt")
+    filedirs = t1.readDir()
+    for f in filedirs:
+        runCommand(f)
+    del domains[""]
+    #sort domain
+    cleanDomains()
 
 if __name__ == '__main__':
     main()

@@ -48,7 +48,7 @@ def readinPortFile():
 
 def runIpSumDump(filename):
     #type, source ip, dest ip, source port, dest port, size
-    p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', 'traffic/eth1_eth2_20110207201002'), stdout=sp.PIPE)
+    p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', "./traffic/"+filename), stdout=sp.PIPE)
     #p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', "traffic/"+filename), stdout=sp.PIPE)
     #iterate over output
     for row in iter(p.stdout.readline, b''):

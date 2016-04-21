@@ -16,12 +16,14 @@ day7Dict = {"",0}
 
 
 def decodeName(filename):
-    year = filename[10:14]
-    month = filename[14:16]
-    day = filename[16:18]
-    hour = filename[18:20]
-    minute = filename[20:22]
-    second = filename[22:24]
+    buf = 8
+    year = filename[10+buf:14+buf]
+    month = filename[14+buf:16+buf]
+    day = filename[16+buf:18+buf]
+    hour = filename[18+buf:20+buf]
+    minute = filename[20+buf:22+buf]
+    second = filename[22+buf:24+buf]
+    print year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second
 
 
 sourceDest = []
@@ -74,31 +76,40 @@ def analizeFile(filename):
 # for i in sourceDest:
 #     print i
 #print len(sourceDest)
-count = 0
-print "********************bits**********************"
-p = sp.Popen(('tcpstat', '-o', '%b','-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
-for row in iter(p.stdout.readline, b''):
-    splitd = row.split(".")
-    total = 0
-    #print splitd
-    for i in splitd:
-        total += int(i)
-    print "total bps: " + str(total)
-    print "bph: " + str(total/3600)
-    print "kbph: " + str(total/3600/1024)
-    print "mbph: " + str(total/3600/1024/1024)
-print "********************bytes**********************"
-p = sp.Popen(('tcpstat', '-o', '%B','-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
-for row in iter(p.stdout.readline, b''):
-    splitd = row.split(".")
-    total = 0
-    #print splitd
-    for i in splitd:
-        total += int(i)
-    print "total bps: " + str(total)
-    print "bph: " + str(total/3600)
-    print "kbph: " + str(total/3600/1024)
-    print "mbph: " + str(total/3600/1024/1024)
+# count = 0
+# print "********************bits**********************"
+# p = sp.Popen(('tcpstat', '-o', '%b','-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
+# for row in iter(p.stdout.readline, b''):
+#     splitd = row.split(".")
+#     total = 0
+#     #print splitd
+#     for i in splitd:
+#         total += int(i)
+#     print "total bps: " + str(total)
+#     print "bph: " + str(total/60)
+#     print "kbph: " + str(total/60/1024)
+#     print "mbph: " + str(total/60/1024/1024)
+# print "********************bytes**********************"
+# p = sp.Popen(('tcpstat', '-o', '%B','-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
+# for row in iter(p.stdout.readline, b''):
+#     splitd = row.split(".")
+#     total = 0
+#     #print splitd
+#     for i in splitd:
+#         total += int(i)
+#     print "total bps: " + str(total)
+#     print "bph: " + str(total/60)
+#     print "kbph: " + str(total/60/1024)
+#     print "mbph: " + str(total/60/1024/1024)
+
+
+def main():
+    filedirs = t1.readDir()
+    for f in filedirs:
+        decodeName(f)
+        getBits(f)
+        getBytes(f)
+        break
 
 
 
@@ -108,9 +119,51 @@ for row in iter(p.stdout.readline, b''):
 
 
 
+def getBytes(filename):
+    print "********************bytes**********************"
+    p = sp.Popen(('tcpstat', '-o', '%B', '-r', filename), stdout=sp.PIPE)
+    for row in iter(p.stdout.readline, b''):
+        splitd = row.split(".")
+        total = 0
+        for i in splitd:
+            total += int(i)
+        print "::::per sec::::"
+        print "total bps: " + str(total)
+        print "kbps: " + str(total / 1024)
+        print "mbps: " + str(total / 1024 / 1024)
+        print "::::per min::::"
+        print "bpm: " + str(total * 60)
+        print "kbpm: " + str(total * 60 / 1024)
+        print "mbpm: " + str(total * 60 / 1024 / 1024)
+        print "::::per hr ::::"
+        print "bph: " + str(total * 3600)
+        print "kbph: " + str(total * 3600 / 1024)
+        print "mbph: " + str(total * 3600 / 1024 / 1024)
 
 
 
+def getBits(filename):
+    print "********************bits**********************"
+    p = sp.Popen(('tcpstat', '-o', '%b', '-r', filename), stdout=sp.PIPE)
+    for row in iter(p.stdout.readline, b''):
+        splitd = row.split(".")
+        total = 0
+        for i in splitd:
+            total += int(i)
+        print "::::per sec::::"
+        print "total bps: " + str(total)
+        print "kbps: " + str(total * 1024)
+        print "mbps: " + str(total * 1024 / 1024)
+        print "::::per min::::"
+        print "bpm: " + str(total * 60)
+        print "kbpm: " + str(total * 60 / 1024)
+        print "mbpm: " + str(total * 60 / 1024 / 1024)
+        print "::::per hr ::::"
+        print "bph: " + str(total * 3600)
+        print "kbph: " + str(total * 3600 / 1024)
+        print "mbph: " + str(total * 3600 / 1024 / 1024)
 
 
 
+if __name__ == '__main__':
+    main()

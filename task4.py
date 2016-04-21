@@ -14,7 +14,8 @@ domains = {"":0}
 
 def runCommand(filename):
     #run command
-    p = sp.Popen(('httpry', '-r', filename),stdout=sp.PIPE)
+    print "trying to read file: " + filename
+    p = sp.Popen(('httpry', '-r', filename), stdout=sp.PIPE)
     for row in iter(p.stdout.readline, b''):
         splitter = row.split()
         #print splitter

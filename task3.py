@@ -128,6 +128,7 @@ def writeToFile(filename):
         f.write(UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1]) + "\n")
         print UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1])
 
+    f.close()
 
 
 

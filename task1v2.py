@@ -8,13 +8,14 @@ import os
 
 numberDict = {400:0}
 nameDict = {"":0}
-newFileName = "outputfiles/output"
+outputNames = []
 
 
-def filterPackets(filename, newFileName,i):
-    p = sp.Popen(('tcpdump', '-r', "./traffic/" + filename, 'icmp', '-w', newFileName+str(i)), stdout=sp.PIPE)
+def filterPackets(filename, newFileName):
+    p = sp.Popen(('tcpdump', '-r', filename, 'icmp', '-w', newFileName), stdout=sp.PIPE)
+    outputNames.append(newFileName)
     for row in iter(p.stdout.readline, b''):
-        print row
+        print "filtering..."
 
 
 #checks if an IP is local
@@ -27,7 +28,7 @@ def isLocal(ip):
 
 def extractTypeAndCode(filename):
     #ipsumdump -r --src --icmp-type --icmp-code --icmp-type-name --icmp-code-name outfile.pcap
-    p = sp.Popen(('ipsumdump', '-r', '--src', '--dst', '--icmp-type', '--icmp-code', '--icmp-type-name', '--icmp-code-name',"outputfiles/"+filename), stdout=sp.PIPE)
+    p = sp.Popen(('ipsumdump', '-r', '--src', '--dst', '--icmp-type', '--icmp-code', '--icmp-type-name', '--icmp-code-name', filename), stdout=sp.PIPE)
 
     for row in iter(p.stdout.readline, b''):
         # split into seperate parts
@@ -38,9 +39,8 @@ def extractTypeAndCode(filename):
             source = splitted[0]
             dest = splitted[1]
 
-            # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
+            # here we filter out local traffic by removing any ip's involving 192.168.x.x and 10.x.x.x IP's
             if (isLocal(source) and not isLocal(dest)) or (not isLocal(source) and isLocal(dest)):
-
                 # add into dictionary if new and increment count if not
                 message = str(splitted[2]) + "," + str(splitted[3])
 
@@ -49,12 +49,12 @@ def extractTypeAndCode(filename):
                 else:
                     numberDict[message] = 1
 
-                message = str(splitted[4]) + " " + str(splitted[5])
+                message2 = str(splitted[4]) + " " + str(splitted[5])
 
-                if message in nameDict:
-                    nameDict[message] += 1
+                if message2 in nameDict:
+                    nameDict[message2] += 1
                 else:
-                    nameDict[message] = 1
+                    nameDict[message2] = 1
 
 
 
@@ -72,27 +72,35 @@ def readDir():
     return fileDirs
 
 
+def writeOutput(filename):
+    # delete inits
+    del nameDict[""]
+    del numberDict[400]
+    f = file(filename, "w")
+
+    for item in nameDict:
+        print item + " : " + str(nameDict[item])
+        f.write(item + " : " + str(nameDict[item]) + "\n")
+
+    for item2 in numberDict:
+        print item2 + " : " + str(numberDict[item2])
+        f.write(item2 + " : " + str(numberDict[item2]) + "\n")
+    f.close()
 
 
 def main():
     index = 0
     # read input and write to new files
-    for f in os.listdir("./traffic"):
-        filterPackets(f, "outputfiles/output", index)
+    fileDirs = readDir()
+    for f in fileDirs:
+        filterPackets(f, "outputfiles/output"+str(index))
         index += 1
     # read new output
-    for k in os.listdir("./outputfiles"):
+    for k in outputNames:
         extractTypeAndCode(k)
 
-    #delete inits
-    del nameDict[""]
-    del numberDict[400]
+    writeOutput("task1output.txt")
 
-    for item in nameDict:
-        print item + " : " + str(nameDict[item])
-
-    for item in numberDict:
-        print item + " : " + str(numberDict[item])
 
 if __name__ == '__main__':
     main()

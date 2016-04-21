@@ -103,32 +103,46 @@ def writeToFile(filename):
     sorted_UDPIn = sorted(UDPIncoming.items(), key=operator.itemgetter(1))
     #create file for output
     f = file(filename, "w")
+    csvf = open("task3csv.csv", "w")
 
+    csvf.write("TCP Outbound ports\n")
+    csvf.write("Port,Count\n")
     f.write("Outbound TCP Ports (port name/port number : bytes)\n")
     print "Outbound TCP Ports (port name/port number : bytes)"
     for i in range(len(sorted_TCPOut) - 1, len(sorted_TCPOut) - 10, -1):
         f.write(TCPPorts[sorted_TCPOut[i][0]] + "/" + sorted_TCPOut[i][0] + " \t: " + str(sorted_TCPOut[i][1]) + "\n")
         print TCPPorts[sorted_TCPOut[i][0]] + "/" + sorted_TCPOut[i][0] + " \t: " + str(sorted_TCPOut[i][1])
+        csvf.write(TCPPorts[sorted_TCPOut[i][0]] + "," + str(sorted_TCPOut[i][1])+"\n")
 
+    csvf.write("\nTCP Inbound ports\n")
+    csvf.write("Port,Count\n")
     f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
     print "\nOutbound TCP Ports (port name/port number : bytes)"
     for i in range(len(sorted_TCPIn) - 1, len(sorted_TCPIn) - 10, -1):
         f.write(TCPPorts[sorted_TCPIn[i][0]] + "/" + sorted_TCPIn[i][0] + " \t: " + str(sorted_TCPIn[i][1]) + "\n")
         print TCPPorts[sorted_TCPIn[i][0]] + "/" + sorted_TCPIn[i][0] + " \t: " + str(sorted_TCPIn[i][1])
+        csvf.write(TCPPorts[sorted_TCPIn[i][0]] + "," + str(sorted_TCPIn[i][1])+"\n")
 
+    csvf.write("\nUDP outbound ports\n")
+    csvf.write("Port,Count\n")
     f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
     print "\nOutbound TCP Ports (port name/port number : bytes)"
     for i in range(len(sorted_UDPOut) - 1, len(sorted_UDPOut) - 10, -1):
         f.write(UDPPorts[sorted_UDPOut[i][0]] + "/" + sorted_UDPOut[i][0] + " \t: " + str(sorted_UDPOut[i][1]) + "\n")
         print UDPPorts[sorted_UDPOut[i][0]] + "/" + sorted_UDPOut[i][0] + " \t: " + str(sorted_UDPOut[i][1])
+        csvf.write(UDPPorts[sorted_UDPOut[i][0]] + "," + str(sorted_UDPOut[i][1])+"\n")
 
+    csvf.write("\nUDP Inbound ports\n")
+    csvf.write("Port,Count\n")
     f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
     print "\nOutbound TCP Ports (port name/port number : bytes)"
     for i in range(len(sorted_UDPIn) - 1, len(sorted_UDPIn) - 10, -1):
         f.write(UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1]) + "\n")
         print UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1])
+        csvf.write(UDPPorts[sorted_UDPIn[i][0]] + "," + str(sorted_UDPIn[i][1])+"\n")
 
     f.close()
+    csvf.close()
 
 
 

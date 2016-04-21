@@ -6,7 +6,7 @@ import subprocess as sp
 import task1v2 as t1
 import datetime
 
-
+csvFile = open("task2output.csv","w")
 
 def readInPackets(filename, outputfilename):
     outgoing = {"": 0}
@@ -14,10 +14,11 @@ def readInPackets(filename, outputfilename):
 
 
     print "reading in " + filename
+    # command
     p = sp.Popen(('ipsumdump', '-t', '-s', '-d', '--wire-length', '-r', filename), stdout=sp.PIPE)
     for row in iter(p.stdout.readline, b''):
         splitter = row.split()
-
+        # discard invalid output
         if len(splitter) < 4:
             continue
         source = splitter[1]
@@ -31,14 +32,10 @@ def readInPackets(filename, outputfilename):
             time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M')
 
 
-            #print "time " + str(time)
-
             if str(time) not in outgoing:
                 outgoing[str(time)] = 0
             if str(time) not in incoming:
                 incoming[str(time)] = 0
-
-
 
             # check if outgoing or incoming connection
             if t1.isLocal(source):
@@ -52,23 +49,27 @@ def readInPackets(filename, outputfilename):
     # delete init
     del incoming[""]
     del outgoing[""]
-
+    # open file
     f = open(outputfilename+filename[-14:], "w")
-    #sort times
+    # sort times
     sortedKeys = incoming.keys()
     sortedKeys.sort()
+    # output
     for i in sortedKeys:
         print str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps"
         f.write(str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps\n")
+        splitDate = str(i).split(" ")
+        csvFile.write(splitDate[0] + "," + splitDate[1] + "," + str(incoming[str(i)]) + "," + str(outgoing[str(i)]) + "\n")
 
+    f.close()
 
 
 
 
 def main():
+    # create coloumn headers for csv file
+    csvFile.write("Date,Time,Download,Upload\n")
     filedirs = t1.readDir()
-    ipsumdumpappr = True
-    tcpstatappr = False
     for f in filedirs:
         readInPackets(f,"timefiles/timefile-")
 

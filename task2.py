@@ -29,6 +29,7 @@ sourceDest = []
 
 def readInPackets(filename):
     p = sp.Popen(('ipsumdump', '-s', '-d', '-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
+    count = 0
     for row in iter(p.stdout.readline, b''):
         splitter = row.split()
         source = splitter[0]
@@ -37,6 +38,9 @@ def readInPackets(filename):
         sourceDest.append(tempArray)
         # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
         #if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
+        count += 1
+    print count
+
 
 def analizeFile(filename):
     #determine if it is an incoming connection or outgoing
@@ -46,9 +50,17 @@ def analizeFile(filename):
     for row in iter(p.stdout.readline, b''):
         #Time:1297105805	n=2	avg=124.50	stddev=44.50	bps=398.40
         splitter = row.split()
-        print splitter[3]
+        #print splitter[4]
         #need to get number from this not the bps kak
-        sourceDest[count][2] = splitter[4]
+        num = ""
+        for letter in splitter[1]:
+            if letter.isdigit():
+                num += letter
+        #print num
+        #sourceDest[count][2] += int(num)
+        #print "*"+str(sourceDest[count][2])
+        count += int(num)
+    print count
 
 
 
@@ -66,3 +78,4 @@ readInPackets("")
 analizeFile("")
 # for i in sourceDest:
 #     print i
+print len(sourceDest)

@@ -4,19 +4,30 @@
 
 import subprocess as sp
 import operator
-
-
 import task1v2 as t1
 
-
-
+UDPPorts = {"":""}
+TCPPorts = {"":""}
 
 UDPIncoming = {"":0}
 UDPOutgoing = {"":0}
 TCPIncoming = {"":0}
 TCPOutgoing = {"":0}
 
-#type, source port, dest port, size
+def readinPortFile():
+    f = open("services", "r")
+    for line in f:
+        splitter = line.split()
+        if len(splitter) > 0:
+            port = splitter[1][0:-4]
+            protocol = splitter[1][-3:]
+            if protocol == "tcp":
+                TCPPorts[port] = splitter[0]
+            elif protocol  == "udp":
+                UDPPorts[port] = splitter[0]
+
+
+            #type, source port, dest port, size
 p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', 'traffic/eth1_eth2_20110207201002'), stdout=sp.PIPE)
 for row in iter(p.stdout.readline, b''):
     #print row
@@ -74,16 +85,17 @@ sorted_TCPIn = sorted(TCPIncoming.items(), key=operator.itemgetter(1))
 sorted_UDPOut = sorted(UDPOutgoing.items(), key=operator.itemgetter(1))
 sorted_UDPIn = sorted(UDPIncoming.items(), key=operator.itemgetter(1))
 
+readinPortFile()
 
-for i in range(len(sorted_TCPOut)-10,len(sorted_TCPOut)):
+for i in range(len(sorted_TCPOut)-1,len(sorted_TCPOut)-10,-1):
     print sorted_TCPOut[i]
 print "********************************"
-for i in range(len(sorted_TCPIn) - 10, len(sorted_TCPIn)):
+for i in range(len(sorted_TCPIn)-1,len(sorted_TCPIn) - 10,-1):
     print sorted_TCPIn[i]
 print "********************************"
-for i in range(len(sorted_UDPOut)-10,len(sorted_UDPOut)):
+for i in range(len(sorted_UDPOut)-1,len(sorted_UDPOut)-10,-1):
     print sorted_UDPOut[i]
 print "********************************"
-for i in range(len(sorted_UDPIn)-10,len(sorted_UDPIn)):
+for i in range(len(sorted_UDPIn)-1,len(sorted_UDPIn)-10,-1):
     print sorted_UDPIn[i]
 

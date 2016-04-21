@@ -54,3 +54,20 @@ sorted_UDPIn = sorted(domains.items(), key=operator.itemgetter(1))
 
 for i in range(len(sorted_UDPIn)-1,len(sorted_UDPIn)-10,-1):
     print sorted_UDPIn[i]
+
+
+
+def main():
+    readinPortFile()
+    for f in os.listdir("./traffic"):
+        runIpSumDump(f)
+
+    # remove inits
+    del TCPIncoming[""]
+    del TCPOutgoing[""]
+    del UDPOutgoing[""]
+    del UDPIncoming[""]
+    writeToFile("task3output.txt")
+
+if __name__ == '__main__':
+    main()

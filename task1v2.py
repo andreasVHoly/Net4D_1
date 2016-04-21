@@ -72,6 +72,7 @@ def main():
     for k in os.listdir("./outputfiles"):
         extractTypeAndCode(k)
 
+    #delete inits
     del nameDict[""]
     del numberDict[400]
 

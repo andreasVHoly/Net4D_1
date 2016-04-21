@@ -48,8 +48,7 @@ def readinPortFile():
 
 def runIpSumDump(filename):
     #type, source ip, dest ip, source port, dest port, size
-    p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', "./traffic/"+filename), stdout=sp.PIPE)
-    #p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', "traffic/"+filename), stdout=sp.PIPE)
+    p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', filename), stdout=sp.PIPE)
     #iterate over output
     for row in iter(p.stdout.readline, b''):
         #split line
@@ -106,28 +105,47 @@ def writeToFile(filename):
     f = file(filename, "w")
 
     f.write("Outbound TCP Ports (port name/port number : bytes)\n")
+    print "Outbound TCP Ports (port name/port number : bytes)"
     for i in range(len(sorted_TCPOut) - 1, len(sorted_TCPOut) - 10, -1):
         f.write(TCPPorts[sorted_TCPOut[i][0]] + "/" + sorted_TCPOut[i][0] + " \t: " + str(sorted_TCPOut[i][1]) + "\n")
+        print TCPPorts[sorted_TCPOut[i][0]] + "/" + sorted_TCPOut[i][0] + " \t: " + str(sorted_TCPOut[i][1])
 
     f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
+    print "\nOutbound TCP Ports (port name/port number : bytes)"
     for i in range(len(sorted_TCPIn) - 1, len(sorted_TCPIn) - 10, -1):
         f.write(TCPPorts[sorted_TCPIn[i][0]] + "/" + sorted_TCPIn[i][0] + " \t: " + str(sorted_TCPIn[i][1]) + "\n")
+        print TCPPorts[sorted_TCPIn[i][0]] + "/" + sorted_TCPIn[i][0] + " \t: " + str(sorted_TCPIn[i][1])
 
     f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
+    print "\nOutbound TCP Ports (port name/port number : bytes)"
     for i in range(len(sorted_UDPOut) - 1, len(sorted_UDPOut) - 10, -1):
         f.write(UDPPorts[sorted_UDPOut[i][0]] + "/" + sorted_UDPOut[i][0] + " \t: " + str(sorted_UDPOut[i][1]) + "\n")
+        print UDPPorts[sorted_UDPOut[i][0]] + "/" + sorted_UDPOut[i][0] + " \t: " + str(sorted_UDPOut[i][1])
 
     f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
+    print "\nOutbound TCP Ports (port name/port number : bytes)"
     for i in range(len(sorted_UDPIn) - 1, len(sorted_UDPIn) - 10, -1):
         f.write(UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1]) + "\n")
+        print UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1])
 
 
 
 
 def main():
     readinPortFile()
+    fileDirs = []
+
+    #read in files from directory
     for f in os.listdir("./traffic"):
-        runIpSumDump(f)
+        print f
+        if os.path.isfile(os.path.join("./traffic",f)):
+            fileDirs.append(os.path.join("./traffic",f))
+
+    print len(fileDirs)
+    #run over files
+    for fle in fileDirs:
+        print fle
+        runIpSumDump(fle)
 
     # remove inits
     del TCPIncoming[""]

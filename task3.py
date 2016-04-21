@@ -137,10 +137,10 @@ def main():
     fileDirs = []
 
     #read in files from directory
-    for f in os.listdir("./traffic"):
+    for f in os.listdir("traffic/"):
         print f
-        if os.path.isfile(os.path.join("./traffic",f)):
-            fileDirs.append(os.path.join("./traffic",f))
+        if os.path.isfile(os.path.join("traffic/",f)):
+            fileDirs.append(os.path.join("traffic/",f))
 
     print len(fileDirs)
     #run over files

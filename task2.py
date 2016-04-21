@@ -5,6 +5,8 @@
 import subprocess as sp
 import os
 import task1v2 as t1
+import datetime
+import operator
 
 day1Dict = {"",0}
 day2Dict = {"",0}
@@ -13,6 +15,11 @@ day4Dict = {"",0}
 day5Dict = {"",0}
 day6Dict = {"",0}
 day7Dict = {"",0}
+
+
+outgoing = {"":0}
+incoming = {"":0}
+
 
 
 def decodeName(filename):
@@ -30,34 +37,41 @@ sourceDest = []
 #$ ipsumdump -s -d -r traffic/eth1_eth2_20110207201002
 
 def readInPackets(filename):
-    p = sp.Popen(('ipsumdump', '-s', '-d', '-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
-    count = 0
+    p = sp.Popen(('ipsumdump', '-t', '-s', '-d', '--wire-length', '-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
     for row in iter(p.stdout.readline, b''):
         splitter = row.split()
-        source = splitter[0]
-        dest = splitter[1]
-        tempArray = [source,dest,0]
-        sourceDest.append(tempArray)
-        # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
-        #if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
-        count += 1
-    print count
+
+        if len(splitter) < 4:
+            continue
+        source = splitter[1]
+        dest = splitter[2]
+        # check for local traffic
+        if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
+
+            #format time
+            time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M:%S')
 
 
-def analizeFile(filename):
-    #determine if it is an incoming connection or outgoing
-        #if the source is a non-local ip then it is incoming
-    p = sp.Popen(('tcpstat', '-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
-    count = 0
-    for row in iter(p.stdout.readline, b''):
-        #Time:1297105805	n=2	avg=124.50	stddev=44.50	bps=398.40
-        splitter = row.split()
-        num = ""
-        for letter in splitter[1]:
-            if letter.isdigit():
-                num += letter
-        count += int(num)
-    print count
+            #print "time " + str(time)
+
+            if str(time) not in outgoing:
+                outgoing[str(time)] = 0
+            if str(time) not in incoming:
+                incoming[str(time)] = 0
+
+
+
+            # check if outgoing or incoming connection
+            if t1.isLocal(source):
+                # means outgoing
+                if str(time) in outgoing:
+                    outgoing[str(time)] += int(splitter[3])
+            elif t1.isLocal(dest):
+                #means incoming
+                if str(time) in incoming:
+                    incoming[str(time)] += int(splitter[3])
+
+
 
 
 
@@ -71,45 +85,26 @@ def analizeFile(filename):
 # del day5Dict[""]
 # del day6Dict[""]
 # del day7Dict[""]
-#readInPackets("")
-#analizeFile("")
-# for i in sourceDest:
-#     print i
-#print len(sourceDest)
-# count = 0
-# print "********************bits**********************"
-# p = sp.Popen(('tcpstat', '-o', '%b','-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
-# for row in iter(p.stdout.readline, b''):
-#     splitd = row.split(".")
-#     total = 0
-#     #print splitd
-#     for i in splitd:
-#         total += int(i)
-#     print "total bps: " + str(total)
-#     print "bph: " + str(total/60)
-#     print "kbph: " + str(total/60/1024)
-#     print "mbph: " + str(total/60/1024/1024)
-# print "********************bytes**********************"
-# p = sp.Popen(('tcpstat', '-o', '%B','-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
-# for row in iter(p.stdout.readline, b''):
-#     splitd = row.split(".")
-#     total = 0
-#     #print splitd
-#     for i in splitd:
-#         total += int(i)
-#     print "total bps: " + str(total)
-#     print "bph: " + str(total/60)
-#     print "kbph: " + str(total/60/1024)
-#     print "mbph: " + str(total/60/1024/1024)
-
 
 def main():
     filedirs = t1.readDir()
+    ipsumdumpappr = True
+    tcpstatappr = False
     for f in filedirs:
-        decodeName(f)
-        getBits(f)
-        getBytes(f)
-        break
+        if tcpstatappr:
+            decodeName(f)
+            getBits(f)
+            getBytes(f)
+            break
+        elif ipsumdumpappr:
+            readInPackets(f)
+            break
+
+    sortedKeys = incoming.keys()
+    sortedKeys.sort()
+    #sortedincoming = sorted(incoming.keys(), key=operator.itemgetter(1))
+    for i in sortedKeys:
+         print str(i) + "\t incoming: " + str(incoming[str(i)]) + "bps\t outgoing: " + str(outgoing[str(i)]) + "bps"
 
 
 

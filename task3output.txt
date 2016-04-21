@@ -1,0 +1,43 @@
+Outbound TCP Ports (port name/port number : bytes)
+http/80 	: 178094346
+imaps/993 	: 74431485
+uncategorised TCP ports/uncat 	: 31285908
+https/443 	: 26396460
+pop3/110 	: 4149795
+pop3s/995 	: 415254
+http-alt/8080 	: 35556
+mmcc/5050 	: 33414
+ssh/22 	: 16800
+
+Outbound TCP Ports (port name/port number : bytes)
+uncategorised TCP ports/uncat 	: 285268227
+http/80 	: 15816849
+https/443 	: 9654168
+urd/465 	: 3207114
+imaps/993 	: 367443
+smtp/25 	: 289179
+http-alt/8080 	: 65007
+rmiregistry/1099 	: 57297
+pop3s/995 	: 47457
+
+Outbound TCP Ports (port name/port number : bytes)
+uncategorised UDP ports/uncat 	: 3541992
+bootps/67 	: 378900
+mdns/5353 	: 138492
+bootpc/68 	: 100962
+ntp/123 	: 16848
+isakmp/500 	: 5184
+domain/53 	: 4728
+https/443 	: 1326
+kamanda/10081 	: 378
+
+Outbound TCP Ports (port name/port number : bytes)
+uncategorised UDP ports/uncat 	: 3417855
+bootpc/68 	: 378900
+mdns/5353 	: 138492
+bootps/67 	: 100962
+ntp/123 	: 71280
+hostmon/5355 	: 68124
+svrloc/427 	: 5286
+isakmp/500 	: 5184
+domain/53 	: 1572

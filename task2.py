@@ -69,8 +69,48 @@ def analizeFile(filename):
 # del day5Dict[""]
 # del day6Dict[""]
 # del day7Dict[""]
-readInPackets("")
-analizeFile("")
+#readInPackets("")
+#analizeFile("")
 # for i in sourceDest:
 #     print i
-print len(sourceDest)
+#print len(sourceDest)
+count = 0
+print "********************bits**********************"
+p = sp.Popen(('tcpstat', '-o', '%b','-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
+for row in iter(p.stdout.readline, b''):
+    splitd = row.split(".")
+    total = 0
+    #print splitd
+    for i in splitd:
+        total += int(i)
+    print "total bps: " + str(total)
+    print "bph: " + str(total/3600)
+    print "kbph: " + str(total/3600/1024)
+    print "mbph: " + str(total/3600/1024/1024)
+print "********************bytes**********************"
+p = sp.Popen(('tcpstat', '-o', '%B','-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
+for row in iter(p.stdout.readline, b''):
+    splitd = row.split(".")
+    total = 0
+    #print splitd
+    for i in splitd:
+        total += int(i)
+    print "total bps: " + str(total)
+    print "bph: " + str(total/3600)
+    print "kbph: " + str(total/3600/1024)
+    print "mbph: " + str(total/3600/1024/1024)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

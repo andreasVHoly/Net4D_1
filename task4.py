@@ -40,11 +40,13 @@ def runCommand(filename):
 
 
 
-def cleanDomains():
+def cleanDomains(filename):
     sortedDomain = sorted(domains.items(), key=operator.itemgetter(1))
-
+    f = file(filename, "w")
     for i in range(len(sortedDomain) - 1, len(sortedDomain) - 10, -1):
         print sortedDomain[i]
+        f.write(str(sortedDomain[i]) + "\n")
+    f.close()
 
 
 
@@ -54,7 +56,7 @@ def main():
         runCommand(f)
     del domains[""]
     #sort domain
-    cleanDomains()
+    cleanDomains("task4output.txt")
 
 if __name__ == '__main__':
     main()

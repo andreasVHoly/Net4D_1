@@ -1,43 +1,43 @@
 Outbound TCP Ports (port name/port number : bytes)
-http/80 	: 178094346
-imaps/993 	: 74431485
-uncategorised TCP ports/uncat 	: 31285908
-https/443 	: 26396460
-pop3/110 	: 4149795
-pop3s/995 	: 415254
-http-alt/8080 	: 35556
-mmcc/5050 	: 33414
-ssh/22 	: 16800
+http/80 	: 208641762
+uncategorised TCP ports/uncat 	: 82648366
+imaps/993 	: 24999822
+https/443 	: 17093267
+pop3/110 	: 1398305
+gnutella-svc/6346 	: 843949
+pop3s/995 	: 597263
+bgpd/2605 	: 150205
+kerberos/88 	: 111092
 
 Outbound TCP Ports (port name/port number : bytes)
-uncategorised TCP ports/uncat 	: 285268227
-http/80 	: 15816849
-https/443 	: 9654168
-urd/465 	: 3207114
-imaps/993 	: 367443
-smtp/25 	: 289179
-http-alt/8080 	: 65007
-rmiregistry/1099 	: 57297
-pop3s/995 	: 47457
+uncategorised TCP ports/uncat 	: 316254437
+http/80 	: 12694627
+https/443 	: 5167055
+urd/465 	: 1069038
+prospero-np/1525 	: 408826
+ripd/2602 	: 313872
+imaps/993 	: 131995
+smtp/25 	: 96393
+l2f/1701 	: 63796
 
 Outbound TCP Ports (port name/port number : bytes)
-uncategorised UDP ports/uncat 	: 3541992
-bootps/67 	: 378900
-mdns/5353 	: 138492
-bootpc/68 	: 100962
-ntp/123 	: 16848
-isakmp/500 	: 5184
-domain/53 	: 4728
-https/443 	: 1326
-kamanda/10081 	: 378
+uncategorised UDP ports/uncat 	: 3539925
+bootps/67 	: 155100
+mdns/5353 	: 125266
+gnutella-svc/6346 	: 62079
+bootpc/68 	: 57802
+domain/53 	: 29859
+ntp/123 	: 8832
+venus/2430 	: 7723
+isakmp/500 	: 1728
 
 Outbound TCP Ports (port name/port number : bytes)
-uncategorised UDP ports/uncat 	: 3417855
-bootpc/68 	: 378900
-mdns/5353 	: 138492
-bootps/67 	: 100962
-ntp/123 	: 71280
-hostmon/5355 	: 68124
-svrloc/427 	: 5286
-isakmp/500 	: 5184
-domain/53 	: 1572
+uncategorised UDP ports/uncat 	: 3481421
+bootpc/68 	: 155100
+mdns/5353 	: 125266
+bootps/67 	: 57802
+ntp/123 	: 56640
+gnutella-svc/6346 	: 43329
+hostmon/5355 	: 38482
+domain/53 	: 18425
+venus/2430 	: 3212

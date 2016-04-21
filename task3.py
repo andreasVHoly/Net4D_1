@@ -1,14 +1,14 @@
 #VHLAND002
 #python file for task 3
-#Traffic by bytes
+#Traffic by bytes for each port
 
 import subprocess as sp
 import operator
 import task1v2 as t1
+import os
 
 UDPPorts = {"":""}
 TCPPorts = {"":""}
-
 UDPIncoming = {"":0}
 UDPOutgoing = {"":0}
 TCPIncoming = {"":0}
@@ -17,85 +17,126 @@ TCPOutgoing = {"":0}
 def readinPortFile():
     f = open("services", "r")
     for line in f:
+        #read in port line & split
         splitter = line.split()
+        #if valid line
         if len(splitter) > 0:
+            #assign port based on protocol
             port = splitter[1][0:-4]
             protocol = splitter[1][-3:]
             if protocol == "tcp":
+                #for name ref
                 TCPPorts[port] = splitter[0]
-            elif protocol  == "udp":
+                # for counting
+                TCPIncoming[port] = 0
+                TCPOutgoing[port] = 0
+            elif protocol == "udp":
+                #for name ref
                 UDPPorts[port] = splitter[0]
+                #for counting
+                UDPIncoming[port] = 0
+                UDPOutgoing[port] = 0
+
+    #assign uncategorised category
+    UDPIncoming["uncat"] = 0
+    UDPOutgoing["uncat"] = 0
+    TCPIncoming["uncat"] = 0
+    TCPOutgoing["uncat"] = 0
+    UDPPorts["uncat"] = "uncategorised UDP ports"
+    TCPPorts["uncat"] = "uncategorised TCP ports"
 
 
-            #type, source port, dest port, size
-p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', 'traffic/eth1_eth2_20110207201002'), stdout=sp.PIPE)
-for row in iter(p.stdout.readline, b''):
-    #print row
-    splitted = row.split()
-    #ensure we have apcket information
-    if len(splitted) == 6:
-        #filter out local traffic
+def runIpSumDump(filename):
+    #type, source ip, dest ip, source port, dest port, size
+    p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', 'traffic/eth1_eth2_20110207201002'), stdout=sp.PIPE)
+    #p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', "traffic/"+filename), stdout=sp.PIPE)
+    #iterate over output
+    for row in iter(p.stdout.readline, b''):
+        #split line
+        splitted = row.split()
+        #ensure we have apcket information
+        if len(splitted) == 6:
+            #filter out local traffic
+            source = splitted[1]
+            dest = splitted[2]
+            if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
+                #if we have a tcp connection
+                if splitted[0] == "T":
+                    #get values
+                    keyOut = splitted[3]
+                    keyIn = splitted[4]
+                    count = int(splitted[5])
+                    #incoming connection
+                    if TCPIncoming.has_key(keyIn):
+                        TCPIncoming[keyIn] += count
+                    else:
+                        #TCPIncoming[keyIn] = count
+                        TCPIncoming["uncat"] += count
+                    #outgoing connection
+                    if TCPOutgoing.has_key(keyOut):
+                        TCPOutgoing[keyOut] += count
+                    else:
+                        TCPOutgoing["uncat"] += count
 
-        source = splitted[1]
-        dest = splitted[2]
 
-        if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
-            #if we have a tcp conn
-            if splitted[0] == "T":
-                #get values
-                keyOut = splitted[3]
-                keyIn = splitted[4]
-                count = int(splitted[5])
-                #incoming connection
-                if TCPIncoming.has_key(keyIn):
-                    TCPIncoming[keyIn] += count
-                else:
-                    TCPIncoming[keyIn] = count
-                #outgoing connection
-                if TCPOutgoing.has_key(keyOut):
-                    TCPOutgoing[keyOut] += count
-                else:
-                    TCPOutgoing[keyOut] = count
-            #if we have a udp conn
-            elif splitted[0] == "U":
-                #get values
-                keyOut = splitted[3]
-                keyIn = splitted[4]
-                count = int(splitted[5])
-                # incoming connection
-                if UDPIncoming.has_key(keyIn):
-                    UDPIncoming[keyIn] += count
-                else:
-                    UDPIncoming[keyIn] = count
-                # outgoing connection
-                if UDPOutgoing.has_key(keyOut):
-                    UDPOutgoing[keyOut] += count
-                else:
-                    UDPOutgoing[keyOut] = count
+                #if we have a udp connection
+                elif splitted[0] == "U":
+                    #get values
+                    keyOut = splitted[3]
+                    keyIn = splitted[4]
+                    count = int(splitted[5])
+                    # incoming connection
+                    if UDPIncoming.has_key(keyIn):
+                        UDPIncoming[keyIn] += count
+                    else:
+                        UDPIncoming["uncat"] += count
+                    # outgoing connection
+                    if UDPOutgoing.has_key(keyOut):
+                        UDPOutgoing[keyOut] += count
+                    else:
+                        UDPOutgoing["uncat"] += count
 
-#remove inits
-del TCPIncoming[""]
-del TCPOutgoing[""]
-del UDPOutgoing[""]
-del UDPIncoming[""]
+def writeToFile(filename):
+    # sort dictionaries
+    sorted_TCPOut = sorted(TCPOutgoing.items(), key=operator.itemgetter(1))
+    sorted_TCPIn = sorted(TCPIncoming.items(), key=operator.itemgetter(1))
+    sorted_UDPOut = sorted(UDPOutgoing.items(), key=operator.itemgetter(1))
+    sorted_UDPIn = sorted(UDPIncoming.items(), key=operator.itemgetter(1))
+    #create file for output
+    f = file(filename, "w")
 
-#sort dictionaries
-sorted_TCPOut = sorted(TCPOutgoing.items(), key=operator.itemgetter(1))
-sorted_TCPIn = sorted(TCPIncoming.items(), key=operator.itemgetter(1))
-sorted_UDPOut = sorted(UDPOutgoing.items(), key=operator.itemgetter(1))
-sorted_UDPIn = sorted(UDPIncoming.items(), key=operator.itemgetter(1))
+    f.write("Outbound TCP Ports (port name/port number : bytes)\n")
+    for i in range(len(sorted_TCPOut) - 1, len(sorted_TCPOut) - 10, -1):
+        f.write(TCPPorts[sorted_TCPOut[i][0]] + "/" + sorted_TCPOut[i][0] + " \t: " + str(sorted_TCPOut[i][1]) + "\n")
 
-readinPortFile()
+    f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
+    for i in range(len(sorted_TCPIn) - 1, len(sorted_TCPIn) - 10, -1):
+        f.write(TCPPorts[sorted_TCPIn[i][0]] + "/" + sorted_TCPIn[i][0] + " \t: " + str(sorted_TCPIn[i][1]) + "\n")
 
-for i in range(len(sorted_TCPOut)-1,len(sorted_TCPOut)-10,-1):
-    print sorted_TCPOut[i]
-print "********************************"
-for i in range(len(sorted_TCPIn)-1,len(sorted_TCPIn) - 10,-1):
-    print sorted_TCPIn[i]
-print "********************************"
-for i in range(len(sorted_UDPOut)-1,len(sorted_UDPOut)-10,-1):
-    print sorted_UDPOut[i]
-print "********************************"
-for i in range(len(sorted_UDPIn)-1,len(sorted_UDPIn)-10,-1):
-    print sorted_UDPIn[i]
+    f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
+    for i in range(len(sorted_UDPOut) - 1, len(sorted_UDPOut) - 10, -1):
+        f.write(UDPPorts[sorted_UDPOut[i][0]] + "/" + sorted_UDPOut[i][0] + " \t: " + str(sorted_UDPOut[i][1]) + "\n")
+
+    f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
+    for i in range(len(sorted_UDPIn) - 1, len(sorted_UDPIn) - 10, -1):
+        f.write(UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1]) + "\n")
+
+
+
+
+def main():
+    readinPortFile()
+    for f in os.listdir("./traffic"):
+        runIpSumDump(f)
+
+    # remove inits
+    del TCPIncoming[""]
+    del TCPOutgoing[""]
+    del UDPOutgoing[""]
+    del UDPIncoming[""]
+    writeToFile("task3output.txt")
+
+if __name__ == '__main__':
+    main()
+
 

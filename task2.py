@@ -2,6 +2,9 @@
 #python file for task 2
 #Bandwidth usage
 
+import subprocess as sp
+import os
+import task1v2 as t1
 
 day1Dict = {"",0}
 day2Dict = {"",0}
@@ -21,16 +24,45 @@ def decodeName(filename):
     second = filename[22:24]
 
 
+sourceDest = []
+#$ ipsumdump -s -d -r traffic/eth1_eth2_20110207201002
+
+def readInPackets(filename):
+    p = sp.Popen(('ipsumdump', '-s', '-d', '-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
+    for row in iter(p.stdout.readline, b''):
+        splitter = row.split()
+        source = splitter[0]
+        dest = splitter[1]
+        tempArray = [source,dest,0]
+        sourceDest.append(tempArray)
+        # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
+        #if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
 
 def analizeFile(filename):
-    print "starting"
+    #determine if it is an incoming connection or outgoing
+        #if the source is a non-local ip then it is incoming
+    p = sp.Popen(('tcpstat', '-r', "traffic/eth1_eth2_20110207201002"), stdout=sp.PIPE)
+    count = 0
+    for row in iter(p.stdout.readline, b''):
+        #Time:1297105805	n=2	avg=124.50	stddev=44.50	bps=398.40
+        splitter = row.split()
+        print splitter[3]
+        #need to get number from this not the bps kak
+        sourceDest[count][2] = splitter[4]
+
+
+
 
 
 #delete inits
-del day1Dict[""]
-del day2Dict[""]
-del day3Dict[""]
-del day4Dict[""]
-del day5Dict[""]
-del day6Dict[""]
-del day7Dict[""]
+# del day1Dict[""]
+# del day2Dict[""]
+# del day3Dict[""]
+# del day4Dict[""]
+# del day5Dict[""]
+# del day6Dict[""]
+# del day7Dict[""]
+readInPackets("")
+analizeFile("")
+# for i in sourceDest:
+#     print i

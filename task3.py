@@ -4,13 +4,11 @@
 
 import subprocess as sp
 import operator
-import os
-from collections import defaultdict
-
-#ipsumdump -p -S -D -L -r traffic/eth1_eth2_20110207003505
 
 
-#def filterResults()
+import task1v2 as t1
+
+
 
 
 UDPIncoming = {"":0}
@@ -19,20 +17,24 @@ TCPIncoming = {"":0}
 TCPOutgoing = {"":0}
 
 #type, source port, dest port, size
-p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', 'traffic/eth1_eth2_20110207003505'), stdout=sp.PIPE)
+p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', 'traffic/eth1_eth2_20110207201002'), stdout=sp.PIPE)
 for row in iter(p.stdout.readline, b''):
     #print row
     splitted = row.split()
     #ensure we have apcket information
     if len(splitted) == 6:
         #filter out local traffic
-        if (splitted[1][0:7] != "192.168" or splitted[1][0:3] != "10.") and (splitted[2][0:7] != "192.168" or splitted[2][0:3] != "10."):
+
+        source = splitted[1]
+        dest = splitted[2]
+
+        if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
             #if we have a tcp conn
             if splitted[0] == "T":
                 #get values
-                keyOut = splitted[1]
-                keyIn = splitted[2]
-                count = int(splitted[3])
+                keyOut = splitted[3]
+                keyIn = splitted[4]
+                count = int(splitted[5])
                 #incoming connection
                 if TCPIncoming.has_key(keyIn):
                     TCPIncoming[keyIn] += count
@@ -46,9 +48,9 @@ for row in iter(p.stdout.readline, b''):
             #if we have a udp conn
             elif splitted[0] == "U":
                 #get values
-                keyOut = splitted[1]
-                keyIn = splitted[2]
-                count = int(splitted[3])
+                keyOut = splitted[3]
+                keyIn = splitted[4]
+                count = int(splitted[5])
                 # incoming connection
                 if UDPIncoming.has_key(keyIn):
                     UDPIncoming[keyIn] += count

@@ -15,6 +15,14 @@ def filterPackets(filename,i):
     for row in iter(p.stdout.readline, b''):
         print row
 
+
+def isLocal(ip):
+    if ip[0:7] == "192.168" or ip[0:3] == "10.":
+        return True
+    else:
+        return False
+
+
 def extractTypeAndCode(filename):
     #ipsumdump -r --src --icmp-type --icmp-code --icmp-type-name --icmp-code-name outfile.pcap
     p = sp.Popen(('ipsumdump', '-r', '--src', '--dst', '--icmp-type', '--icmp-code', '--icmp-type-name', '--icmp-code-name',"outputfiles/"+filename), stdout=sp.PIPE)
@@ -26,8 +34,11 @@ def extractTypeAndCode(filename):
 
         if len(splitted) == 6:
 
+            source = splitted[0]
+            dest = splitted[1]
+
              # here we filter out local traffic by removing any errors involving 192.168.x.x and 10.x.x.x IP's
-            if (splitted[0][0:7] != "192.168" or splitted[0][0:3] != "10.") and (splitted[1][0:7] != "192.168" or splitted[1][0:3] != "10."):
+            if (isLocal(source) and not isLocal(dest)) or (not isLocal(source) and isLocal(dest)):
 
                 #add into dictionary if new and increment count if not
                 message = str(splitted[2]) + "," + str(splitted[3])
@@ -47,18 +58,18 @@ def extractTypeAndCode(filename):
 
 
 
-index = 0
-for f in os.listdir("./traffic"):
-    filterPackets(f,index)
-    index += 1
-
-for k in os.listdir("./outputfiles"):
-    extractTypeAndCode(k)
-
-del nameDict[""]
-del numberDict[400]
-for item in nameDict:
-    print item + " : " + str(nameDict[item])
-
-for item in numberDict:
-    print item + " : " + str(numberDict[item])
+# index = 0
+# for f in os.listdir("./traffic"):
+#     filterPackets(f,index)
+#     index += 1
+#
+# for k in os.listdir("./outputfiles"):
+#     extractTypeAndCode(k)
+#
+# del nameDict[""]
+# del numberDict[400]
+# for item in nameDict:
+#     print item + " : " + str(nameDict[item])
+#
+# for item in numberDict:
+#     print item + " : " + str(numberDict[item])

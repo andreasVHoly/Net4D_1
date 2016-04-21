@@ -48,6 +48,7 @@ def readinPortFile():
 
 def runIpSumDump(filename):
     #type, source ip, dest ip, source port, dest port, size
+    print "trying to read " + filename
     p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', filename), stdout=sp.PIPE)
     #iterate over output
     for row in iter(p.stdout.readline, b''):

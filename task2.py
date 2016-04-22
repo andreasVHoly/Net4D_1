@@ -56,8 +56,8 @@ def readInPackets(filename, outputfilename):
     sortedKeys.sort()
     # output
     for i in sortedKeys:
-        print str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps"
-        f.write(str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps\n")
+        #print str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps"
+        #f.write(str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps\n")
         splitDate = str(i).split(" ")
         csvFile.write(splitDate[0] + "," + splitDate[1] + "," + str(incoming[str(i)]) + "," + str(outgoing[str(i)]) + "\n")
 
@@ -72,6 +72,7 @@ def main():
     filedirs = t1.readDir()
     for f in filedirs:
         readInPackets(f,"timefiles/timefile-")
+    csvFile.close()
 
 
 if __name__ == '__main__':

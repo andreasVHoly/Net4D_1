@@ -82,8 +82,11 @@ def cleanDomains(filename):
 
 def main():
     filedirs = t1.readDir()
+    filecount = 0
     for f in filedirs:
+        print "File " + str(filecount) + "/170"
         runCommand(f)
+        filecount += 1
     del domains[""]
     #sort domain
     cleanDomains("task4output.txt")

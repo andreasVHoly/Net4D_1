@@ -26,20 +26,37 @@ def runCommand(filename):
             if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
                 domain = ""
                 count = 0
-                # we start from the back looking for .
-                for i in range(len(splitter[6])-1, -1, -1):
-                    if splitter[6][i] == "." and count == 0:
-                        count += 1
-                        domain = splitter[6][i] + domain
-                    elif splitter[6][i] == "." and count == 1:
-                        break
+                if ".co." in splitter[6]:
+                    # we start from the back looking for .
+                    for i in range(len(splitter[6]) - 1, -1, -1):
+                        if splitter[6][i] == "." and count < 2:
+                            count += 1
+                            domain = splitter[6][i] + domain
+                        elif splitter[6][i] == "." and count == 2:
+                            break
+                        else:
+                            domain = splitter[6][i] + domain
+                    domain = "*." + domain
+                    if domain in domains:
+                        domains[domain] += 1
                     else:
-                        domain = splitter[6][i] + domain
-                domain = "*." + domain
-                if domain in domains:
-                    domains[domain] += 1
+                        domains[domain] = 1
+                    print splitter[6]
                 else:
-                    domains[domain] = 1
+                    # we start from the back looking for .
+                    for i in range(len(splitter[6])-1, -1, -1):
+                        if splitter[6][i] == "." and count == 0:
+                            count += 1
+                            domain = splitter[6][i] + domain
+                        elif splitter[6][i] == "." and count == 1:
+                            break
+                        else:
+                            domain = splitter[6][i] + domain
+                    domain = "*." + domain
+                    if domain in domains:
+                        domains[domain] += 1
+                    else:
+                        domains[domain] = 1
 
 
 

@@ -41,7 +41,7 @@ def runCommand(filename):
                         domains[domain] += 1
                     else:
                         domains[domain] = 1
-                    print splitter[6]
+                    #print splitter[6]
                 else:
                     # we start from the back looking for .
                     for i in range(len(splitter[6])-1, -1, -1):

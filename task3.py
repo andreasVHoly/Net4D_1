@@ -48,7 +48,7 @@ def readinPortFile():
 
 def runIpSumDump(filename):
     #type, source ip, dest ip, source port, dest port, size
-    print "trying to read " + filename
+    print "read file " + filename
     p = sp.Popen(('ipsumdump', '-p', '-s', '-d', '-S', '-D', '-L', '-r', filename), stdout=sp.PIPE)
     #iterate over output
     for row in iter(p.stdout.readline, b''):
@@ -176,9 +176,11 @@ def main():
     readinPortFile()
     fileDirs = t1.readDir()
     #run over files
+    filecount = 1
     for fle in fileDirs:
-        print fle
+        print "File " + str(filecount) + "/170"
         runIpSumDump(fle)
+        filecount += 1
 
     # remove inits
     del TCPIncoming[""]

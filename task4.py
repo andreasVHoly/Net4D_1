@@ -63,10 +63,20 @@ def runCommand(filename):
 def cleanDomains(filename):
     sortedDomain = sorted(domains.items(), key=operator.itemgetter(1))
     f = file(filename, "w")
-    for i in range(len(sortedDomain) - 1, len(sortedDomain) - 10, -1):
-        print sortedDomain[i]
-        f.write(str(sortedDomain[i]) + "\n")
+    csvf = file("task4_raw.csv", "w")
+    csvf.write("Domain Name,Count\n")
+    for i in range(len(sortedDomain) - 1, len(sortedDomain) - 11, -1):
+        #print sortedDomain[i]
+        #f.write(str(sortedDomain[i]) + "\n")
+        csvf.write(str(sortedDomain[i][0]) + "," + str(sortedDomain[i][1]) + "\n")
+
+    othercount = 0
+    for i in range(0, len(sortedDomain) - 10):
+        othercount += sortedDomain[i][1]
+
+    csvf.write("other,"+str(othercount))
     f.close()
+    csvf.close()
 
 
 

@@ -29,7 +29,8 @@ def readInPackets(filename, outputfilename):
 
             #format time
             #time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M:%S') #for seconds
-            time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M')
+            #time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M')
+            time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H')
 
 
             if str(time) not in outgoing:

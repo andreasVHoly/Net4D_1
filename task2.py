@@ -71,8 +71,11 @@ def main():
     # create coloumn headers for csv file
     csvFile.write("Date,Time,Download,Upload\n")
     filedirs = t1.readDir()
+    count = 1
     for f in filedirs:
+        print "Processing " + str(count) + " /170"
         readInPackets(f,"timefiles/timefile-")
+        count +=1
     csvFile.close()
 
 

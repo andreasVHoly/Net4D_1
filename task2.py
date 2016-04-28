@@ -60,7 +60,7 @@ def readInPackets(filename, outputfilename):
         #print str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps"
         #f.write(str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps\n")
         splitDate = str(i).split(" ")
-        csvFile.write(splitDate[0] + "," + splitDate[1] + "," + str(incoming[str(i)]) + "," + str(outgoing[str(i)]) + "\n")
+        csvFile.write(splitDate[0] + "," + splitDate[1] + ":00:00" + "," + str(incoming[str(i)]) + "," + str(outgoing[str(i)]) + "\n")
 
     f.close()
 

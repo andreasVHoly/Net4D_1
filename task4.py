@@ -12,18 +12,25 @@ import task1v2 as t1
 
 domains = {"":0}
 
+
 def runCommand(filename):
     #run command
+    counter = 0
     print "trying to read file: " + filename
     p = sp.Popen(('httpry', '-r', filename), stdout=sp.PIPE)
     for row in iter(p.stdout.readline, b''):
         splitter = row.split()
         # we are only looking at get's
+
         if splitter[5] == "GET":
+
             # filter out local traffic
             source = splitter[2]
             dest = splitter[3]
             if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
+                # if "polka" in splitter[6]:
+                #     counter += 1
+                #     print splitter
                 domain = ""
                 count = 0
                 if ".co." in splitter[6]:
@@ -58,7 +65,7 @@ def runCommand(filename):
                     else:
                         domains[domain] = 1
 
-
+    return counter
 
 def cleanDomains(filename):
     sortedDomain = sorted(domains.items(), key=operator.itemgetter(1))
@@ -83,12 +90,14 @@ def cleanDomains(filename):
 def main():
     filedirs = t1.readDir()
     filecount = 0
+    polkacount = 0
     for f in filedirs:
         print "File " + str(filecount) + "/170"
-        runCommand(f)
+        polkacount += runCommand(f)
         filecount += 1
     del domains[""]
     #sort domain
+    print polkacount
     cleanDomains("task4output.txt")
 
 if __name__ == '__main__':

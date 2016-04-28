@@ -55,45 +55,53 @@ def runIpSumDump(filename):
         #split line
         splitted = row.split()
         #ensure we have apcket information
-        if len(splitted) == 6:
-            #filter out local traffic
+        #if len(splitted) == 6:
+        #filter out local traffic
+
+
+
+        if splitted[0] == "T":
+            # get values
             source = splitted[1]
             dest = splitted[2]
             if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
-                #if we have a tcp connection
-                if splitted[0] == "T":
-                    #get values
-                    keyOut = splitted[3]
-                    keyIn = splitted[4]
-                    count = int(splitted[5])
-                    #incoming connection
-                    if keyIn in TCPIncoming:
-                        TCPIncoming[keyIn] += count
-                    else:
-                        TCPIncoming["uncat"] += count
-                    #outgoing connection
-                    if keyOut in TCPOutgoing:
-                        TCPOutgoing[keyOut] += count
-                    else:
-                        TCPOutgoing["uncat"] += count
+                keyOut = splitted[3]
+                keyIn = splitted[4]
+                count = int(splitted[5])
+                # incoming connection
+                if keyIn in TCPIncoming:
+                    TCPIncoming[keyIn] += count
+                else:
+                    TCPIncoming["uncat"] += count
+                # outgoing connection
+                if keyOut in TCPOutgoing:
+                    TCPOutgoing[keyOut] += count
+                else:
+                    TCPOutgoing["uncat"] += count
 
 
-                #if we have a udp connection
-                elif splitted[0] == "U":
-                    #get values
-                    keyOut = splitted[3]
-                    keyIn = splitted[4]
-                    count = int(splitted[5])
-                    # incoming connection
-                    if keyIn in UDPIncoming:
-                        UDPIncoming[keyIn] += count
-                    else:
-                        UDPIncoming["uncat"] += count
-                    # outgoing connection
-                    if keyOut in UDPOutgoing:
-                        UDPOutgoing[keyOut] += count
-                    else:
-                        UDPOutgoing["uncat"] += count
+        # if we have a udp connection
+        elif splitted[0] == "U":
+            # get values
+            source = splitted[1]
+            dest = splitted[2]
+            if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
+            # if we have a tcp connection
+                keyOut = splitted[3]
+                keyIn = splitted[4]
+                count = int(splitted[5])
+                # incoming connection
+                if keyIn in UDPIncoming:
+                    UDPIncoming[keyIn] += count
+                else:
+                    UDPIncoming["uncat"] += count
+                # outgoing connection
+                if keyOut in UDPOutgoing:
+                    UDPOutgoing[keyOut] += count
+                else:
+                    UDPOutgoing["uncat"] += count
+
+
 
 def writeToFile(filename):
     # sort dictionaries

@@ -20,9 +20,11 @@ def readInPackets(filename):
     p = sp.Popen(('ipsumdump', '-t', '-s', '-d', '--wire-length', '-r', filename), stdout=sp.PIPE)
     for row in iter(p.stdout.readline, b''):
         splitter = row.split()
+
         # discard invalid output
-        if len(splitter) < 4:
+        if len(splitter) == 2:
             continue
+        #print splitter
         source = splitter[1]
         dest = splitter[2]
         # check for local traffic
@@ -31,25 +33,27 @@ def readInPackets(filename):
 
             #format time
             #time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M:%S') #for seconds
-            #time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M')
-            time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H')
+            #time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M') # for minutes
+            time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H') # for seconds
 
             key = str(time)+ ":00:00"
 
-            if key not in outgoing:
-                outgoing[key] = 0
-            if key not in incoming:
-                incoming[key] = 0
+
+
 
 
             # check if outgoing or incoming connection
             if t1.isLocal(source):
+                if key not in outgoing:
+                    outgoing[key] = 0
                 # means outgoing
                 #if str(time) in outgoing:
-                 outgoing[key] += int(splitter[3])
+                outgoing[key] += int(splitter[3])
             elif t1.isLocal(dest):
                 #means incoming
                 #if str(time) in incoming:
+                if key not in incoming:
+                    incoming[key] = 0
                 incoming[key] += int(splitter[3])
 
 

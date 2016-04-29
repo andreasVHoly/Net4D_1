@@ -8,9 +8,11 @@ import datetime
 
 csvFile = open("task2output.csv","w")
 
-def readInPackets(filename, outputfilename):
-    outgoing = {"": 0}
-    incoming = {"": 0}
+outgoing = {"": 0}
+incoming = {"": 0}
+
+def readInPackets(filename):
+
 
 
     print "reading in " + filename
@@ -32,39 +34,42 @@ def readInPackets(filename, outputfilename):
             #time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H:%M')
             time = datetime.datetime.fromtimestamp(float(splitter[0])).strftime('%Y-%m-%d %H')
 
+            key = str(time)+ ":00:00"
 
-            if str(time) not in outgoing:
-                outgoing[str(time)] = 0
-            if str(time) not in incoming:
-                incoming[str(time)] = 0
+            if key not in outgoing:
+                outgoing[key] = 0
+            if key not in incoming:
+                incoming[key] = 0
+
 
             # check if outgoing or incoming connection
             if t1.isLocal(source):
                 # means outgoing
-                if str(time) in outgoing:
-                    outgoing[str(time)] += int(splitter[3])
+                #if str(time) in outgoing:
+                 outgoing[key] += int(splitter[3])
             elif t1.isLocal(dest):
                 #means incoming
-                if str(time) in incoming:
-                    incoming[str(time)] += int(splitter[3])
+                #if str(time) in incoming:
+                incoming[key] += int(splitter[3])
+
+
+def writeFile():
     # delete init
     del incoming[""]
     del outgoing[""]
-    # open file
-    f = open(outputfilename+filename[-14:], "w")
+
     # sort times
     sortedKeys = incoming.keys()
     sortedKeys.sort()
     # output
     for i in sortedKeys:
-        #print str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps"
-        #f.write(str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps\n")
+        # print str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps"
+        # f.write(str(i) + "\t incoming: " + str(incoming[str(i)]) + " \tbps\t outgoing: " + str(outgoing[str(i)]) + " \tbps\n")
         splitDate = str(i).split(" ")
-        csvFile.write(splitDate[0] + "," + splitDate[1] + ":00:00" + "," + str(incoming[str(i)]) + "," + str(outgoing[str(i)]) + "\n")
+        csvFile.write(
+            splitDate[0] + "," + splitDate[1] + "," + str(incoming[str(i)]) + "," + str(outgoing[str(i)]) + "\n")
 
-    f.close()
-
-
+    csvFile.close()
 
 
 def main():
@@ -74,9 +79,10 @@ def main():
     count = 1
     for f in filedirs:
         print "Processing " + str(count) + " /170"
-        readInPackets(f,"timefiles/timefile-")
+        readInPackets(f)
         count +=1
-    csvFile.close()
+    writeFile()
+
 
 
 if __name__ == '__main__':

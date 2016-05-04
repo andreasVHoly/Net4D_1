@@ -4,7 +4,7 @@
 
 import subprocess as sp
 import operator
-import task1v2 as t1
+import task1 as t1
 import os
 
 UDPPorts = {"":""}
@@ -44,6 +44,45 @@ def readinPortFile():
     TCPOutgoing["uncat"] = 0
     UDPPorts["uncat"] = "uncategorised UDP ports"
     TCPPorts["uncat"] = "uncategorised TCP ports"
+
+
+def basicCommand(filename):
+    print "read file " + filename
+    p = sp.Popen(('ipsumdump', '-p','-s', '-d', '-D', '-L', '-r', filename), stdout=sp.PIPE)
+    # iterate over output
+    for row in iter(p.stdout.readline, b''):
+        # split line
+        splitted = row.split()
+        if splitted[0] == "T":
+            # get values
+            source = splitted[1]
+            dest = splitted[2]
+            if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
+                key = splitted[3]
+
+                count = int(splitted[4])
+                # incoming connection
+                if key in TCPIncoming:
+                    TCPIncoming[key] += count
+                else:
+                    TCPIncoming["uncat"] += count
+
+
+
+        # if we have a udp connection
+        elif splitted[0] == "U":
+            # get values
+            source = splitted[1]
+            dest = splitted[2]
+            if (t1.isLocal(source) and not t1.isLocal(dest)) or (not t1.isLocal(source) and t1.isLocal(dest)):
+                # if we have a tcp connection
+                key = splitted[3]
+                count = int(splitted[4])
+                # incoming connection
+                if key in UDPIncoming:
+                    UDPIncoming[key] += count
+                else:
+                    UDPIncoming["uncat"] += count
 
 
 def runIpSumDump(filename):
@@ -117,12 +156,12 @@ def writeToFile(filename):
     csvf.write("Port,Count\n")
     # f.write("Outbound TCP Ports (port name/port number : bytes)\n")
     # print "Outbound TCP Ports (port name/port number : bytes)"
-    for i in range(len(sorted_TCPOut) - 1, len(sorted_TCPOut) - 11, -1):
+    for i in range(len(sorted_TCPOut) - 1, len(sorted_TCPOut) - 12, -1):
         #f.write(TCPPorts[sorted_TCPOut[i][0]] + "/" + sorted_TCPOut[i][0] + " \t: " + str(sorted_TCPOut[i][1]) + "\n")
         #print TCPPorts[sorted_TCPOut[i][0]] + "/" + sorted_TCPOut[i][0] + " \t: " + str(sorted_TCPOut[i][1])
         csvf.write(TCPPorts[sorted_TCPOut[i][0]] + "," + str(sorted_TCPOut[i][1])+"\n")
     othertcpout = 0
-    for i in range(0, len(sorted_TCPOut) - 10):
+    for i in range(0, len(sorted_TCPOut) - 11):
         othertcpout += sorted_TCPOut[i][1]
         # print UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1])
     csvf.write("Other," + str(othertcpout) + "\n")
@@ -131,12 +170,12 @@ def writeToFile(filename):
     csvf.write("Port,Count\n")
     # f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
     # print "\nOutbound TCP Ports (port name/port number : bytes)"
-    for i in range(len(sorted_TCPIn) - 1, len(sorted_TCPIn) - 11, -1):
+    for i in range(len(sorted_TCPIn) - 1, len(sorted_TCPIn) - 12, -1):
         #f.write(TCPPorts[sorted_TCPIn[i][0]] + "/" + sorted_TCPIn[i][0] + " \t: " + str(sorted_TCPIn[i][1]) + "\n")
         #print TCPPorts[sorted_TCPIn[i][0]] + "/" + sorted_TCPIn[i][0] + " \t: " + str(sorted_TCPIn[i][1])
         csvf.write(TCPPorts[sorted_TCPIn[i][0]] + "," + str(sorted_TCPIn[i][1])+"\n")
     othertcpin = 0
-    for i in range(0, len(sorted_TCPIn) - 10):
+    for i in range(0, len(sorted_TCPIn) - 11):
         othertcpin += sorted_TCPIn[i][1]
         # print UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1])
     csvf.write("Other," + str(othertcpin) + "\n")
@@ -146,12 +185,12 @@ def writeToFile(filename):
     csvf.write("Port,Count\n")
     #f.write("\nOutbound TCP Ports (port name/port number : bytes)\n")
     #print "\nOutbound TCP Ports (port name/port number : bytes)"
-    for i in range(len(sorted_UDPOut) - 1, len(sorted_UDPOut) - 11, -1):
+    for i in range(len(sorted_UDPOut) - 1, len(sorted_UDPOut) - 12, -1):
         #f.write(UDPPorts[sorted_UDPOut[i][0]] + "/" + sorted_UDPOut[i][0] + " \t: " + str(sorted_UDPOut[i][1]) + "\n")
         #print UDPPorts[sorted_UDPOut[i][0]] + "/" + sorted_UDPOut[i][0] + " \t: " + str(sorted_UDPOut[i][1])
         csvf.write(UDPPorts[sorted_UDPOut[i][0]] + "," + str(sorted_UDPOut[i][1])+"\n")
     otherudpout = 0
-    for i in range(0, len(sorted_UDPOut) - 10):
+    for i in range(0, len(sorted_UDPOut) - 11):
         otherudpout += sorted_UDPOut[i][1]
         # print UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1])
     csvf.write("Other," + str(otherudpout) + "\n")
@@ -164,12 +203,12 @@ def writeToFile(filename):
 
 
 
-    for i in range(len(sorted_UDPIn) - 1, len(sorted_UDPIn) - 11, -1):
+    for i in range(len(sorted_UDPIn) - 1, len(sorted_UDPIn) - 12, -1):
         #f.write(UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1]) + "\n")
         #print UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1])
         csvf.write(UDPPorts[sorted_UDPIn[i][0]] + "," + str(sorted_UDPIn[i][1])+"\n")
     otherudpin = 0
-    for i in range(0,len(sorted_UDPIn)-10):
+    for i in range(0,len(sorted_UDPIn)-11):
         otherudpin += sorted_UDPIn[i][1]
         #print UDPPorts[sorted_UDPIn[i][0]] + "/" + sorted_UDPIn[i][0] + " \t: " + str(sorted_UDPIn[i][1])
     csvf.write("Other," + str(otherudpin) + "\n")
@@ -178,7 +217,18 @@ def writeToFile(filename):
     f.close()
     csvf.close()
 
+def newWrite():
+    sorted_TCPIn = sorted(TCPIncoming.items(), key=operator.itemgetter(1))
+    sorted_UDPIn = sorted(UDPIncoming.items(), key=operator.itemgetter(1))
 
+    csvf = open("task3csvnew.csv", "w")
+    for i in sorted_TCPIn:
+
+        csvf.write(str(i[0])+","+TCPPorts[i[0]] + "," + str(i[1])+"\n")
+    csvf.write("\n\n")
+    for j in sorted_UDPIn:
+
+        csvf.write(str(j[0])+","+UDPPorts[j[0]] + "," + str(j[1]) + "\n")
 
 def main():
     readinPortFile()
@@ -187,7 +237,8 @@ def main():
     filecount = 1
     for fle in fileDirs:
         print "File " + str(filecount) + "/170"
-        runIpSumDump(fle)
+        #runIpSumDump(fle)
+        basicCommand(fle)
         filecount += 1
 
     # remove inits
@@ -195,9 +246,8 @@ def main():
     del TCPOutgoing[""]
     del UDPOutgoing[""]
     del UDPIncoming[""]
-    writeToFile("task3output.txt")
+    #writeToFile("task3output.txt")
+    newWrite()
 
 if __name__ == '__main__':
     main()
-
-

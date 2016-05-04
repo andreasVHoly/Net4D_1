@@ -7,7 +7,7 @@ import subprocess as sp
 import operator
 
 
-import task1v2 as t1
+import task1 as t1
 
 
 domains = {"":0}
@@ -22,7 +22,9 @@ def runCommand(filename):
         splitter = row.split()
         # we are only looking at get's
 
-        if splitter[5] == "GET":
+
+        #print splitter
+        if splitter[5] != "-":
 
             # filter out local traffic
             source = splitter[2]
@@ -33,37 +35,37 @@ def runCommand(filename):
                 #     print splitter
                 domain = ""
                 count = 0
-                if ".co." in splitter[6]:
+                # if ".co." in splitter[6]:
+                #     # we start from the back looking for .
+                #     for i in range(len(splitter[6]) - 1, -1, -1):
+                #         if splitter[6][i] == "." and count < 2:
+                #             count += 1
+                #             domain = splitter[6][i] + domain
+                #         elif splitter[6][i] == "." and count == 2:
+                #             break
+                #         else:
+                #             domain = splitter[6][i] + domain
+                #     domain = "*." + domain
+                #     if domain in domains:
+                #         domains[domain] += 1
+                #     else:
+                #         domains[domain] = 1
+                #     #print splitter[6]
+                # else:
                     # we start from the back looking for .
-                    for i in range(len(splitter[6]) - 1, -1, -1):
-                        if splitter[6][i] == "." and count < 2:
-                            count += 1
-                            domain = splitter[6][i] + domain
-                        elif splitter[6][i] == "." and count == 2:
-                            break
-                        else:
-                            domain = splitter[6][i] + domain
-                    domain = "*." + domain
-                    if domain in domains:
-                        domains[domain] += 1
+                for i in range(len(splitter[6])-1, -1, -1):
+                    if splitter[6][i] == "." and count == 0:
+                        count += 1
+                        domain = splitter[6][i] + domain
+                    elif splitter[6][i] == "." and count == 1:
+                        break
                     else:
-                        domains[domain] = 1
-                    #print splitter[6]
+                        domain = splitter[6][i] + domain
+                domain = "*." + domain
+                if domain in domains:
+                    domains[domain] += 1
                 else:
-                    # we start from the back looking for .
-                    for i in range(len(splitter[6])-1, -1, -1):
-                        if splitter[6][i] == "." and count == 0:
-                            count += 1
-                            domain = splitter[6][i] + domain
-                        elif splitter[6][i] == "." and count == 1:
-                            break
-                        else:
-                            domain = splitter[6][i] + domain
-                    domain = "*." + domain
-                    if domain in domains:
-                        domains[domain] += 1
-                    else:
-                        domains[domain] = 1
+                    domains[domain] = 1
 
     return counter
 
@@ -72,13 +74,13 @@ def cleanDomains(filename):
     f = file(filename, "w")
     csvf = file("task4_raw.csv", "w")
     csvf.write("Domain Name,Count\n")
-    for i in range(len(sortedDomain) - 1, len(sortedDomain) - 11, -1):
+    for i in range(len(sortedDomain) - 1, len(sortedDomain) - 15, -1):
         #print sortedDomain[i]
         #f.write(str(sortedDomain[i]) + "\n")
         csvf.write(str(sortedDomain[i][0]) + "," + str(sortedDomain[i][1]) + "\n")
 
     othercount = 0
-    for i in range(0, len(sortedDomain) - 10):
+    for i in range(0, len(sortedDomain) - 14):
         othercount += sortedDomain[i][1]
 
     csvf.write("other,"+str(othercount))

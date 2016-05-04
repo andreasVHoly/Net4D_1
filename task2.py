@@ -3,7 +3,7 @@
 #Bandwidth usage
 
 import subprocess as sp
-import task1v2 as t1
+import task1 as t1
 import datetime
 
 csvFile = open("task2output.csv","w")
